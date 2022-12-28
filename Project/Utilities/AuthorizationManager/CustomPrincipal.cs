@@ -10,7 +10,7 @@ using Utilities.CertificateManager;
 
 namespace Utilities.AuthorizationManager
 {
-    class CustomPrincipal : IPrincipal
+    public class CustomPrincipal : IPrincipal
     {
         IIdentity identity = null;
         public CustomPrincipal(IIdentity identity)
