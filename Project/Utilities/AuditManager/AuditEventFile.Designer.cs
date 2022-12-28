@@ -86,5 +86,23 @@ namespace Utilities.AuditManager {
                 return ResourceManager.GetString("AuthorizationSuccess", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User {0} failed to execute {1}. Reason: {2}..
+        /// </summary>
+        internal static string ExecutionFailure {
+            get {
+                return ResourceManager.GetString("ExecutionFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User {0} successfully executed {1}..
+        /// </summary>
+        internal static string ExecutionSuccess {
+            get {
+                return ResourceManager.GetString("ExecutionSuccess", resourceCulture);
+            }
+        }
     }
 }

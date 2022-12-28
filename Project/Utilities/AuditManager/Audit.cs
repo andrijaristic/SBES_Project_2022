@@ -74,6 +74,36 @@ namespace Utilities.AuditManager
             }
         }
 
+        public static void ExecutionSuccess(string userName, string serviceName)
+        {
+            if (customLog != null)
+            {
+                string execSuccess = AuditEvents.ExecutionSuccess;
+                string message = string.Format(execSuccess, userName, serviceName);
+                customLog.WriteEntry(message);
+            }
+            else
+            {
+                throw new ArgumentException(string.Format("Error while trying to write event (eventid = {0}) to event log.",
+                    (int)AuditEventTypes.ExecutionSuccess));
+            }
+        }
+
+        public static void ExecutionFailure(string userName, string serviceName, string reason)
+        {
+            if (customLog != null)
+            {
+                string execFailure = AuditEvents.ExecutionFailure;
+                string message = string.Format(execFailure, userName, serviceName, reason);
+                customLog.WriteEntry(message);
+            }
+            else
+            {
+                throw new ArgumentException(string.Format("Error while trying to write event (eventid = {0}) to event log.",
+                    (int)AuditEventTypes.ExecutionFailure));
+            }
+        }
+
         public void Dispose()
         {
             if (customLog != null) 

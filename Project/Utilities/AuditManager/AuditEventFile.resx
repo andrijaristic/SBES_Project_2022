@@ -126,4 +126,10 @@
   <data name="AuthorizationSuccess" xml:space="preserve">
     <value>User {0} successfully accessed {1}.</value>
   </data>
+  <data name="ExecutionFailure" xml:space="preserve">
+    <value>User {0} failed to execute {1}. Reason: {2}.</value>
+  </data>
+  <data name="ExecutionSuccess" xml:space="preserve">
+    <value>User {0} successfully executed {1}.</value>
+  </data>
 </root>
