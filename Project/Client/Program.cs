@@ -54,18 +54,15 @@ namespace Client
                             break;
                         case 5:
                             ClientUIHelper.GetAddParameters(out region, out city, out year);
-                            proxy.AddConsumer(databaseName, "Vojvodina", "Subotica", 2028);
-                            //proxy.AddConsumer(databaseName, region, city, year);
+                            proxy.AddConsumer(databaseName, region, city, year);
                             break;
                         case 6:
                             ClientUIHelper.GetEditParameters(out region, out city, out year, out month, out amount);
-                            proxy.EditConsumer(databaseName, "Vojvodina", "Subotica", 2028, Months.DECEMBAR, 3.7);
-                            //proxy.EditConsumer(databaseName, region, city, year, month, amount);
+                            proxy.EditConsumer(databaseName, region, city, year, month, amount);
                             break;
                         case 7:
                             ClientUIHelper.GetDeleteParameters(out region, out city, out year);
-                            proxy.DeleteConsumer(databaseName, "Vojvodina", "Novi Sad", 2028);
-                            //proxy.DeleteConsumer(databaseName, region, city, year);
+                            proxy.DeleteConsumer(databaseName, region, city, year);
                             break;
                         case 8:
                             break;
