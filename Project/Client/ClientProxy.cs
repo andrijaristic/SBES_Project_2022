@@ -20,7 +20,7 @@ namespace Client
             : base(binding, address)
         {
             string cltCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
-            cltCertCN = "wcfwriter";    // zakomentarisi ako pokreces sa naloga koje se zove wcfreader, wcfwriter, ili wcfadmin
+            cltCertCN = "wcfadmin";    // zakomentarisi ako pokreces sa naloga koje se zove wcfreader, wcfwriter, ili wcfadmin
             this.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.Custom;
             this.Credentials.ServiceCertificate.Authentication.CustomCertificateValidator = new ClientCertValidator();
             this.Credentials.ServiceCertificate.Authentication.RevocationMode = X509RevocationMode.NoCheck;
@@ -49,7 +49,19 @@ namespace Client
 
         public void ArchiveDatabase(string databaseName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                factory.ArchiveDatabase(databaseName);
+                Console.WriteLine("Database archived successfully");
+            }
+            catch (FaultException<DatabaseException> e)
+            {
+                Console.WriteLine("Error: {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: {0}", e.Message);
+            }
         }
 
         public double AverageConsumptionForCity(string databaseName, string city)
@@ -64,12 +76,36 @@ namespace Client
 
         public void CreateDatabase(string databaseName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                factory.CreateDatabase(databaseName);
+                Console.WriteLine("Database created successfully");
+            }
+            catch (FaultException<DatabaseException> e)
+            {
+                Console.WriteLine("Error: {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: {0}", e.Message);
+            }
         }
 
         public void DeleteDatabase(string databaseName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                factory.DeleteDatabase(databaseName);
+                Console.WriteLine("Database deleted successfully");
+            }
+            catch (FaultException<DatabaseException> e)
+            {
+                Console.WriteLine("Error: {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: {0}", e.Message);
+            }
         }
 
         public void EditConsumer(string databaseName, string region, string city, int year, double amount)

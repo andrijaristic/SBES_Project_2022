@@ -42,10 +42,13 @@ namespace Client
                             databaseName = ClientUIHelper.GetDatabase();
                             break;
                         case 2:
+                            proxy.CreateDatabase(databaseName);
                             break;
                         case 3:
+                            proxy.DeleteDatabase(databaseName);
                             break;
                         case 4:
+                            proxy.ArchiveDatabase(databaseName); 
                             break;
                         case 5:
                             ClientUIHelper.GetParameters(out region, out city, out year, out amount);
