@@ -24,11 +24,15 @@ namespace Contracts
 
         [OperationContract]
         [FaultContract(typeof(DatabaseException))]
-        void AddConsumer(string databaseName, string region, string city, int year, double amount);
+        void AddConsumer(string databaseName, string region, string city, int year);
 
         [OperationContract]
         [FaultContract(typeof(DatabaseException))]
-        void EditConsumer(string databaseName, string region, string city, int year, double amount);
+        void EditConsumer(string databaseName, string region, string city, int year, Months month, double amount);
+
+        [OperationContract]
+        [FaultContract(typeof(DatabaseException))]
+        void DeleteConsumer(string databaseName, string region, string city, int year);
 
         [OperationContract]
         [FaultContract(typeof(DatabaseException))]
