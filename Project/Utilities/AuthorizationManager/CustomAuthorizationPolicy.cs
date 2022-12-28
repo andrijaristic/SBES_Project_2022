@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Claims;
 using System.IdentityModel.Policy;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,19 +41,19 @@ namespace Utilities.AuthorizationManager
                 return false;
             }
 
-            /// windowsIdentity je null ovde. Nemam pojma sto, sve prolazi lepo cak i kad je
-            /// odkomentarisano, samo javlja na Service da nema reference ali cu zakomentarisati za svaki slucaj
-            /// 
-            //WindowsIdentity windowsIdentity = identities[0] as WindowsIdentity;
-            //try
-            //{
-            //    Audit.AuthenticationSuccess(Formatter.ParseName(windowsIdentity.Name));
+            Type x509IdentityType = identities[0].GetType();
+            FieldInfo certificateField = x509IdentityType.GetField("certificate", BindingFlags.Instance | BindingFlags.NonPublic);
+            var cert = (X509Certificate2)certificateField.GetValue(identities[0]);
+            string identity = (cert.Subject.Split(',')[0].Split('=')[1].Split('_'))[0];
 
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
+            try
+            {
+                Audit.AuthenticationSuccess(Formatter.ParseName(identity));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
             evaluationContext.Properties["Principal"] =
                 new CustomPrincipal(identities[0]);
