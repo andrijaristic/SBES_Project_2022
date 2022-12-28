@@ -30,11 +30,11 @@ namespace Client
 
             factory = this.CreateChannel();
         }
-        public void AddConsumer(string databaseName, string region, string city, int year, double amount)
+        public void AddConsumer(string databaseName, string region, string city, int year)
         {
             try
             {
-                factory.AddConsumer(databaseName, region, city, year, amount);
+                factory.AddConsumer(databaseName, region, city, year);
                 Console.WriteLine("New consumer added successfully");
             }
             catch (FaultException<DatabaseException> e)
@@ -107,12 +107,27 @@ namespace Client
                 Console.WriteLine("Error: {0}", e.Message);
             }
         }
-
-        public void EditConsumer(string databaseName, string region, string city, int year, double amount)
+        public void DeleteConsumer(string databaseName, string region, string city, int year)
         {
             try
             {
-                factory.EditConsumer(databaseName, region, city, year, amount);
+                factory.DeleteConsumer(databaseName, region, city, year);
+                Console.WriteLine("Consumer deleted successfully");
+            }
+            catch (FaultException<DatabaseException> e)
+            {
+                Console.WriteLine("Error: {0}", e.Detail.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: {0}", e.Message);
+            }
+        }
+        public void EditConsumer(string databaseName, string region, string city, int year, Months month, double amount)
+        {
+            try
+            {
+                factory.EditConsumer(databaseName, region, city, year, month, amount);
                 Console.WriteLine("Consumer edited successfully");
             }
             catch (FaultException<DatabaseException> e)

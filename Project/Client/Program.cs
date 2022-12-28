@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -34,6 +35,7 @@ namespace Client
                     string region;
                     string city;
                     int year;
+                    Months month;
                     double amount;
 
                     switch (input)
@@ -51,18 +53,25 @@ namespace Client
                             proxy.ArchiveDatabase(databaseName); 
                             break;
                         case 5:
-                            ClientUIHelper.GetParameters(out region, out city, out year, out amount);
-                            proxy.AddConsumer(databaseName, region, city, year, amount);
+                            ClientUIHelper.GetAddParameters(out region, out city, out year);
+                            proxy.AddConsumer(databaseName, "Vojvodina", "Subotica", 2028);
+                            //proxy.AddConsumer(databaseName, region, city, year);
                             break;
                         case 6:
-                            ClientUIHelper.GetParameters(out region, out city, out year, out amount);
-                            proxy.EditConsumer(databaseName, region, city, year, amount);
+                            ClientUIHelper.GetEditParameters(out region, out city, out year, out month, out amount);
+                            proxy.EditConsumer(databaseName, "Vojvodina", "Subotica", 2028, Months.DECEMBAR, 3.7);
+                            //proxy.EditConsumer(databaseName, region, city, year, month, amount);
                             break;
                         case 7:
+                            ClientUIHelper.GetDeleteParameters(out region, out city, out year);
+                            proxy.DeleteConsumer(databaseName, "Vojvodina", "Novi Sad", 2028);
+                            //proxy.DeleteConsumer(databaseName, region, city, year);
                             break;
                         case 8:
                             break;
                         case 9:
+                            break;
+                        case 10:
                             break;
                         case 0:
                             Console.WriteLine("Exiting");
