@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuditHelper.cs" />
     <Compile Include="DatabaseHelper.cs" />
     <Compile Include="DatabaseManagementService.cs" />
     <Compile Include="Program.cs" />

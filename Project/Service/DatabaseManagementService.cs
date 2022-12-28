@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Permissions;
 using System.ServiceModel;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
@@ -17,6 +16,8 @@ namespace Service
         [PrincipalPermission(SecurityAction.Demand, Role = "Add")]
         public void AddConsumer(string databaseName, string region, string city, int year, double amount)
         {
+            AuditHelper.AutorizeLog("AddConsumer");
+
             if (String.IsNullOrWhiteSpace(databaseName))
             {
                 throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
@@ -44,9 +45,8 @@ namespace Service
         [PrincipalPermission(SecurityAction.Demand, Role = "Archive")]
         public void ArchiveDatabase(string databaseName)
         {
-            // ako je databaseName prazan string baci exception
-            // ako nije onda napravi u DatabaseHelper metodu koja ce da nadje postojecu bazu koja nije arhivirana
-            // i arhivira je, entiteti ne treba da se obrisu, samo treba prvi red da se promeni iz False u True
+            AuditHelper.AutorizeLog("ArchiveDatabase");
+
             if (String.IsNullOrWhiteSpace(databaseName))
             {
                 throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
@@ -56,7 +56,7 @@ namespace Service
             bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
             if (!readingSuccessful)
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database doesnt exist, is archived or is in faulted state"));
+                throw new FaultException<DatabaseException>(new DatabaseException("Database doesn't exist, is archived or is in faulted state"));
             }
 
             if (!DatabaseHelper.ArchiveDatabase(serviceFolder + databaseName + ".txt", consumers))
@@ -82,8 +82,8 @@ namespace Service
         [PrincipalPermission(SecurityAction.Demand, Role = "Create")]
         public void CreateDatabase(string databaseName)
         {
-            // ako je databaseName prazan string baci exception
-            // napravi metodu u DatabaseHelper koja pravi bazu samo ako baza sa istim imenom ne postoji
+            AuditHelper.AutorizeLog("CreateDatabase");
+
             if (String.IsNullOrWhiteSpace(databaseName))
             {
                 throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
@@ -98,8 +98,8 @@ namespace Service
         [PrincipalPermission(SecurityAction.Demand, Role = "Delete")]
         public void DeleteDatabase(string databaseName)
         {
-            // ako je databaseName prazan string baci exception
-            // napravi metodu u DatabaseHelper koja brise bazu samo ako baza postoji i nije arhivirana
+            AuditHelper.AutorizeLog("DeleteDatabase");
+
             if (String.IsNullOrWhiteSpace(databaseName))
             {
                 throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
@@ -114,6 +114,8 @@ namespace Service
         [PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
         public void EditConsumer(string databaseName, string region, string city, int year, double amount)
         {
+            AuditHelper.AutorizeLog("EditConsumer");
+
             if (String.IsNullOrWhiteSpace(databaseName))
             {
                 throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));

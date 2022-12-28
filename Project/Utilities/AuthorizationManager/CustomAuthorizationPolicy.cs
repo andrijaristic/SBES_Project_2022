@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities.AuditManager;
 
 namespace Utilities.AuthorizationManager
 {
@@ -37,6 +38,20 @@ namespace Utilities.AuthorizationManager
             {
                 return false;
             }
+
+            /// windowsIdentity je null ovde. Nemam pojma sto, sve prolazi lepo cak i kad je
+            /// odkomentarisano, samo javlja na Service da nema reference ali cu zakomentarisati za svaki slucaj
+            /// 
+            //WindowsIdentity windowsIdentity = identities[0] as WindowsIdentity;
+            //try
+            //{
+            //    Audit.AuthenticationSuccess(Formatter.ParseName(windowsIdentity.Name));
+
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.Message);
+            //}
 
             evaluationContext.Properties["Principal"] =
                 new CustomPrincipal(identities[0]);
