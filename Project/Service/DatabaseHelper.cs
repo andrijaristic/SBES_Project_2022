@@ -80,5 +80,45 @@ namespace Service
             }
             return true;
         }
+
+        public static bool ArchiveDatabase(string filename, List<Consumer> consumers)
+        {
+            if (!File.Exists(filename))
+            {
+                return false;
+            }
+
+            using (StreamWriter sw = new StreamWriter(filename))
+            {
+                sw.WriteLine(true);
+                foreach(Consumer consumer in consumers)
+                {
+                    sw.WriteLine(Consumer.ToString(consumer));
+                }
+            }
+
+            return true;
+        }
+
+        public static bool DeleteDatabase(string filename)
+        {
+            if (!File.Exists(filename))
+            {
+                return false;
+            }
+
+            using(StreamReader sr = new StreamReader(filename))
+            {
+                bool archived = bool.Parse(sr.ReadLine());
+                if (archived) 
+                {
+                    return false;
+                }
+            }
+
+            File.Delete(filename);
+
+            return true;
+        }
     }
 }

@@ -47,7 +47,22 @@ namespace Service
             // ako je databaseName prazan string baci exception
             // ako nije onda napravi u DatabaseHelper metodu koja ce da nadje postojecu bazu koja nije arhivirana
             // i arhivira je, entiteti ne treba da se obrisu, samo treba prvi red da se promeni iz False u True
-            throw new NotImplementedException();
+            if (String.IsNullOrWhiteSpace(databaseName))
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+            }
+
+            List<Consumer> consumers;
+            bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
+            if (!readingSuccessful)
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Database doesnt exist, is archived or is in faulted state"));
+            }
+
+            if (!DatabaseHelper.ArchiveDatabase(serviceFolder + databaseName + ".txt", consumers))
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Database doesn't exist, is already archived or is in faulted state"));
+            }
         }
 
         public double AverageConsumptionForCity(string databaseName, string city)
@@ -69,7 +84,15 @@ namespace Service
         {
             // ako je databaseName prazan string baci exception
             // napravi metodu u DatabaseHelper koja pravi bazu samo ako baza sa istim imenom ne postoji
-            throw new NotImplementedException();
+            if (String.IsNullOrWhiteSpace(databaseName))
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+            }
+
+            if (!DatabaseHelper.CreateDatabase(serviceFolder + databaseName + ".txt"))
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Database already exists"));
+            }
         }
 
         [PrincipalPermission(SecurityAction.Demand, Role = "Delete")]
@@ -77,7 +100,15 @@ namespace Service
         {
             // ako je databaseName prazan string baci exception
             // napravi metodu u DatabaseHelper koja brise bazu samo ako baza postoji i nije arhivirana
-            throw new NotImplementedException();
+            if (String.IsNullOrWhiteSpace(databaseName))
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+            }
+
+            if (!DatabaseHelper.DeleteDatabase(serviceFolder + databaseName + ".txt"))
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Database doesn't exist, is archived or is in faulted state"));
+            }
         }
 
         [PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
