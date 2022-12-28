@@ -2,9 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Security.Permissions;
+using System.Security.Principal;
 using System.ServiceModel;
+using System.ServiceModel.Configuration;
 using System.Text;
+using System.Threading;
+using Utilities;
 
 namespace Service
 {
@@ -13,10 +18,15 @@ namespace Service
         private string serviceFolder = "ServiceData/";
         // dodaj polje koje je proxy ka servisu za replikaciju, i pozivaj ga u metodama gde se uspesno izmene podaci
 
-        [PrincipalPermission(SecurityAction.Demand, Role = "Add")]
+        //[PrincipalPermission(SecurityAction.Demand, Role = "Add")]
         public void AddConsumer(string databaseName, string region, string city, int year)
         {
-            AuditHelper.AutorizeLog("AddConsumer");
+            IPrincipal principal = Thread.CurrentPrincipal;
+            if (!CheckPermission(principal, "Add", "AddConsumer"))
+            {
+                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
+                throw new FaultException($"User {userName} tried to call AddConsumer method without having Add permissions.");
+            }
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
@@ -52,10 +62,15 @@ namespace Service
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
         }
 
-        [PrincipalPermission(SecurityAction.Demand, Role = "Archive")]
+        //[PrincipalPermission(SecurityAction.Demand, Role = "Archive")]
         public void ArchiveDatabase(string databaseName)
         {
-            AuditHelper.AutorizeLog("ArchiveDatabase");
+            IPrincipal principal = Thread.CurrentPrincipal;
+            if (!CheckPermission(principal, "Archive", "ArchiveDatabase"))
+            {
+                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
+                throw new FaultException($"User {userName} tried to call ArchiveDatabase method without having Archive permissions.");
+            }
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
@@ -89,10 +104,15 @@ namespace Service
             throw new NotImplementedException();
         }
 
-        [PrincipalPermission(SecurityAction.Demand, Role = "Create")]
+        //[PrincipalPermission(SecurityAction.Demand, Role = "Create")]
         public void CreateDatabase(string databaseName)
         {
-            AuditHelper.AutorizeLog("CreateDatabase");
+            IPrincipal principal = Thread.CurrentPrincipal;
+            if (!CheckPermission(principal, "Create", "CreateDatabase"))
+            {
+                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
+                throw new FaultException($"User {userName} tried to call CreateDatabase method without having Create permissions.");
+            }
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
@@ -105,10 +125,15 @@ namespace Service
             }
         }
 
-        [PrincipalPermission(SecurityAction.Demand, Role = "Delete")]
+        //[PrincipalPermission(SecurityAction.Demand, Role = "Delete")]
         public void DeleteDatabase(string databaseName)
         {
-            AuditHelper.AutorizeLog("DeleteDatabase");
+            IPrincipal principal = Thread.CurrentPrincipal;
+            if (!CheckPermission(principal, "Delete", "DeleteDatabase"))
+            {
+                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
+                throw new FaultException($"User {userName} tried to call DeleteDatabase method without having Delete permissions.");
+            }
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
@@ -121,10 +146,15 @@ namespace Service
             }
         }
 
-        [PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
+        //[PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
         public void DeleteConsumer(string databaseName, string region, string city, int year)
         {
-            AuditHelper.AutorizeLog("DeleteConsumer");
+            IPrincipal principal = Thread.CurrentPrincipal;
+            if (!CheckPermission(principal, "Edit", "DeleteConsumer"))
+            {
+                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
+                throw new FaultException($"User {userName} tried to call DeleteConsumer method without having Edit permissions.");
+            }
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
@@ -158,10 +188,15 @@ namespace Service
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
         }
 
-        [PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
+        //[PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
         public void EditConsumer(string databaseName, string region, string city, int year, Months month, double amount)
         {
-            AuditHelper.AutorizeLog("EditConsumer");
+            IPrincipal principal = Thread.CurrentPrincipal;
+            if (!CheckPermission(principal, "Edit", "EditConsumer"))
+            {
+                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
+                throw new FaultException($"User {userName} tried to call EditConsumer method without having Edit permissions.");
+            }
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
@@ -198,6 +233,19 @@ namespace Service
             // ako je databaseName prazan string baci exception
             // iz baze ucita sve entitete, vec ima metoda DatabaseHelper.GetAllConsumers(), i onda ovde odradi logiku
             throw new NotImplementedException();
+        }
+
+        private bool CheckPermission(IPrincipal principal, string permission, string serviceName)
+        {
+            if (principal.IsInRole(permission))
+            {
+                AuditHelper.AuthorizationSuccess(serviceName);
+                return true;
+            } else
+            {
+                AuditHelper.AuthorizationFailure(serviceName, $"Insufficient {permission} permissions");
+                return false;
+            }
         }
     }
 }

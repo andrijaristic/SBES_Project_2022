@@ -48,8 +48,8 @@ namespace Utilities.AuditManager
         {
             if (customLog != null)
             {
-                string userAuthSuccess = AuditEvents.AuthorizationSuccess;
-                string message = string.Format(userAuthSuccess, userName, serviceName);
+                string userAuthorizationSuccess = AuditEvents.AuthorizationSuccess;
+                string message = string.Format(userAuthorizationSuccess, userName, serviceName);
                 customLog.WriteEntry(message);
             }
             else
@@ -63,8 +63,8 @@ namespace Utilities.AuditManager
         {
             if (customLog != null)
             {
-                string userAuthSuccess = AuditEvents.AuthorizationSuccess;
-                string message = string.Format(userAuthSuccess, userName, serviceName, reason);
+                string userAuthorizationFailure = AuditEvents.AuthorizationFailed;
+                string message = string.Format(userAuthorizationFailure, userName, serviceName, reason);
                 customLog.WriteEntry(message);
             }
             else
