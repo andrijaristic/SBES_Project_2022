@@ -46,6 +46,7 @@
     <Compile Include="Consumer.cs" />
     <Compile Include="DatabaseException.cs" />
     <Compile Include="IDatabaseManagement.cs" />
+    <Compile Include="Months.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
