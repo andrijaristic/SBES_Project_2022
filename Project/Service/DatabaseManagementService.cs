@@ -14,13 +14,23 @@ namespace Service
         // dodaj polje koje je proxy ka servisu za replikaciju, i pozivaj ga u metodama gde se uspesno izmene podaci
 
         [PrincipalPermission(SecurityAction.Demand, Role = "Add")]
-        public void AddConsumer(string databaseName, string region, string city, int year, double amount)
+        public void AddConsumer(string databaseName, string region, string city, int year)
         {
             AuditHelper.AutorizeLog("AddConsumer");
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
                 throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+            }
+
+            if (String.IsNullOrWhiteSpace(region))
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Region cannot be empty"));
+            }
+
+            if (String.IsNullOrWhiteSpace(city))
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("City cannot be empty"));
             }
 
             List<Consumer> consumers;
@@ -32,13 +42,13 @@ namespace Service
 
             foreach(Consumer consumer in consumers)
             {
-                if(String.Equals(consumer.Region,region) && String.Equals(consumer.City, city) && consumer.Year == year && consumer.Amount == amount)
+                if(String.Equals(consumer.Region,region) && String.Equals(consumer.City, city) && consumer.Year == year)
                 {
                     throw new FaultException<DatabaseException>(new DatabaseException("Consumer with that region, city and year already exists"));
                 }
             }
 
-            consumers.Add(new Consumer(region, city, year, amount));
+            consumers.Add(new Consumer(region, city, year));
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
         }
 
@@ -112,7 +122,44 @@ namespace Service
         }
 
         [PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
-        public void EditConsumer(string databaseName, string region, string city, int year, double amount)
+        public void DeleteConsumer(string databaseName, string region, string city, int year)
+        {
+            AuditHelper.AutorizeLog("DeleteConsumer");
+
+            if (String.IsNullOrWhiteSpace(databaseName))
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+            }
+
+            List<Consumer> consumers;
+            bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
+            if (!readingSuccessful)
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Database doesnt exist, is archived or is in faulted state"));
+            }
+
+            bool consumerExists = false;
+            Consumer deleteConsumer = null;
+            foreach (Consumer consumer in consumers)
+            {
+                if (String.Equals(consumer.Region, region) && String.Equals(consumer.City, city) && consumer.Year == year)
+                {
+                    consumerExists = true;
+                    deleteConsumer = consumer;
+                }
+            }
+
+            if (!consumerExists)
+            {
+                throw new FaultException<DatabaseException>(new DatabaseException("Consumer doesnt exist"));
+            }
+
+            consumers.Remove(deleteConsumer);
+            DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
+        }
+
+        [PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
+        public void EditConsumer(string databaseName, string region, string city, int year, Months month, double amount)
         {
             AuditHelper.AutorizeLog("EditConsumer");
 
@@ -134,7 +181,7 @@ namespace Service
                 if (String.Equals(consumer.Region, region) && String.Equals(consumer.City, city) && consumer.Year == year)
                 {
                     consumerExists = true;
-                    consumer.Amount = amount;
+                    consumer.Amounts[(int)month] = amount;
                 }
             }
 
