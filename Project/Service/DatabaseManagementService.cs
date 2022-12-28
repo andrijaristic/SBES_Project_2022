@@ -6,6 +6,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.Text;
 using System.Threading;
@@ -30,36 +31,52 @@ namespace Service
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+                string reason = "Database name cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "AddConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             if (String.IsNullOrWhiteSpace(region))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Region cannot be empty"));
+                string reason = "Region cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "AddConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(region));
             }
 
             if (String.IsNullOrWhiteSpace(city))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("City cannot be empty"));
+                string reason = "City cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "AddConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             List<Consumer> consumers;
             bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
             if(!readingSuccessful)
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database doesnt exist, is archived or is in faulted state"));
+                string reason = "Database doesnt exist, is archived or is in faulted state";
+                AuditHelper.ExecutionFailure(principal, "AddConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             foreach(Consumer consumer in consumers)
             {
                 if(String.Equals(consumer.Region,region) && String.Equals(consumer.City, city) && consumer.Year == year)
                 {
-                    throw new FaultException<DatabaseException>(new DatabaseException("Consumer with that region, city and year already exists"));
+                    string reason = "Consumer with that region, city and year already exists";
+                    AuditHelper.ExecutionFailure(principal, "AddConsumer", reason);
+
+                    throw new FaultException<DatabaseException>(new DatabaseException(reason));
                 }
             }
 
             consumers.Add(new Consumer(region, city, year));
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
+            AuditHelper.ExecutionSuccess(principal, "AddConsumer");
         }
 
         //[PrincipalPermission(SecurityAction.Demand, Role = "Archive")]
@@ -74,6 +91,9 @@ namespace Service
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
+                string reason = "Consumer with that region, city and year already exists";
+                AuditHelper.ExecutionFailure(principal, "ArchiveDatabase", reason);
+
                 throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
             }
 
@@ -81,13 +101,21 @@ namespace Service
             bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
             if (!readingSuccessful)
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database doesn't exist, is archived or is in faulted state"));
+                string reason = "Database doesn't exist, is archived or is in faulted state";
+                AuditHelper.ExecutionFailure(principal, "ArchiveDatabase", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             if (!DatabaseHelper.ArchiveDatabase(serviceFolder + databaseName + ".txt", consumers))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database doesn't exist, is already archived or is in faulted state"));
+                string reason = "Database doesn't exist, is archived or is in faulted state";
+                AuditHelper.ExecutionFailure(principal, "ArchiveDatabase", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
+
+            AuditHelper.ExecutionSuccess(principal, "ArchiveDatabase");
         }
 
         public double AverageConsumptionForCity(string databaseName, string city)
@@ -116,13 +144,21 @@ namespace Service
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+                string reason = "Database name cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "CreateDatabase", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             if (!DatabaseHelper.CreateDatabase(serviceFolder + databaseName + ".txt"))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database already exists"));
+                string reason = "Database already exists";
+                AuditHelper.ExecutionFailure(principal, "CreateDatabase", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
+
+            AuditHelper.ExecutionSuccess(principal, "CreateDatabase");
         }
 
         //[PrincipalPermission(SecurityAction.Demand, Role = "Delete")]
@@ -137,13 +173,21 @@ namespace Service
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+                string reason = "Database name cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "DeleteDatabase", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             if (!DatabaseHelper.DeleteDatabase(serviceFolder + databaseName + ".txt"))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database doesn't exist, is archived or is in faulted state"));
+                string reason = "Database doesn't exist, is archived or is in faulted state";
+                AuditHelper.ExecutionFailure(principal, "DeleteDatabase", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
+
+            AuditHelper.ExecutionSuccess(principal, "DeleteDatabase");
         }
 
         //[PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
@@ -158,14 +202,20 @@ namespace Service
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+                string reason = "Database name cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "DeleteConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             List<Consumer> consumers;
             bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
             if (!readingSuccessful)
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database doesnt exist, is archived or is in faulted state"));
+                string reason = "Database doesnt exist, is archived or is in faulted state";
+                AuditHelper.ExecutionFailure(principal, "DeleteConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             bool consumerExists = false;
@@ -181,11 +231,15 @@ namespace Service
 
             if (!consumerExists)
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Consumer doesnt exist"));
+                string reason = "Consumer doesnt exist";
+                AuditHelper.ExecutionFailure(principal, "DeleteConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             consumers.Remove(deleteConsumer);
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
+            AuditHelper.ExecutionSuccess(principal, "DeleteConsumer");
         }
 
         //[PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
@@ -200,14 +254,20 @@ namespace Service
 
             if (String.IsNullOrWhiteSpace(databaseName))
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+                string reason = "Database name cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "EditConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             List<Consumer> consumers;
             bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
             if (!readingSuccessful)
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Database doesnt exist, is archived or is in faulted state"));
+                string reason = "Database doesnt exist, is archived or is in faulted state";
+                AuditHelper.ExecutionFailure(principal, "EditConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             bool consumerExists = false;
@@ -222,10 +282,14 @@ namespace Service
 
             if(!consumerExists)
             {
-                throw new FaultException<DatabaseException>(new DatabaseException("Consumer doesnt exist"));
+                string reason = "Consumer doesnt exist";
+                AuditHelper.ExecutionFailure(principal, "EditConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
 
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
+            AuditHelper.ExecutionSuccess(principal, "EditConsumer");
         }
 
         public string MaxConsumerForRegion(string databaseName, string region)
@@ -239,11 +303,11 @@ namespace Service
         {
             if (principal.IsInRole(permission))
             {
-                AuditHelper.AuthorizationSuccess(serviceName);
+                AuditHelper.AuthorizationSuccess(principal, serviceName);
                 return true;
             } else
             {
-                AuditHelper.AuthorizationFailure(serviceName, $"Insufficient {permission} permissions");
+                AuditHelper.AuthorizationFailure(principal, serviceName, $"Insufficient {permission} permissions");
                 return false;
             }
         }
