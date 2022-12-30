@@ -66,12 +66,39 @@ namespace Client
 
         public double AverageConsumptionForCity(string databaseName, string city)
         {
-            throw new NotImplementedException();
+
+            try
+            {
+                return factory.AverageConsumptionForCity(databaseName,city);
+            }
+            catch (FaultException<DatabaseException> e)
+            {
+                Console.WriteLine("Error: {0}", e.Detail.Message);
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: {0}", e.Message);
+                return 0;
+            }
         }
 
         public double AverageConsumptionForRegion(string databaseName, string region)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return factory.AverageConsumptionForRegion(databaseName, region);
+            }
+            catch (FaultException<DatabaseException> e)
+            {
+                Console.WriteLine("Error: {0}", e.Detail.Message);
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: {0}", e.Message);
+                return 0;
+            }
         }
 
         public void CreateDatabase(string databaseName)
@@ -142,7 +169,20 @@ namespace Client
 
         public string MaxConsumerForRegion(string databaseName, string region)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return factory.MaxConsumerForRegion(databaseName, region);
+            }
+            catch (FaultException<DatabaseException> e)
+            {
+                Console.WriteLine("Error: {0}", e.Detail.Message);
+                return "";
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: {0}", e.Message);
+                return "";
+            }
         }
 
         public void Dispose()

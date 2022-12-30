@@ -18,7 +18,18 @@ namespace Client
             // 5. Add consumer 6. Edit consumer 7.Delete consumer 8. Get average for region 9. Get average for city
             // 10. Get max for region  0. exit
             // provera da li korisnik unese validnu komandu
-
+            Console.WriteLine("1. Switch database");
+            Console.WriteLine("2. Create database");
+            Console.WriteLine("3. Delete database");
+            Console.WriteLine("4. Archive database");
+            Console.WriteLine("5. Add consumer");
+            Console.WriteLine("6. Edit consumer");
+            Console.WriteLine("7. Delete consumer");
+            Console.WriteLine("8. Get average for region");
+            Console.WriteLine("9. Get average for city");
+            Console.WriteLine("10.Get max for region");
+            Console.WriteLine("0. Exit");
+            Console.WriteLine("Insert command:");
             return int.Parse(Console.ReadLine());
         }
 
@@ -26,7 +37,7 @@ namespace Client
         {
             // poziva se ako korisnik odabere opciju Switch database
             // od korisnika ucita database
-
+            Console.WriteLine("Enter database name:");
             return Console.ReadLine();
         }
 
@@ -35,10 +46,12 @@ namespace Client
             // poziva se ako korisnik odabere opciju Add consumer
             // treba da od korisnika ucita svaki ovaj parametar (region,city,year)
             // validacija da li je godina broj
-
-            region = "";
-            city = "";
-            year = 0;
+            Console.WriteLine("Enter region: ");
+            region = Console.ReadLine();
+            Console.WriteLine("Enter city name: ");
+            city = Console.ReadLine();
+            Console.WriteLine("Enter year: ");
+            int.TryParse(Console.ReadLine(),out year);
             return;
         }
 
@@ -48,10 +61,12 @@ namespace Client
             // treba da od korisnika ucita svaki ovaj parametar (region,city,year)
             // validacija da li je godina broj
             // copy pase GetAddParameters
-
-            region = "";
-            city = "";
-            year = 0;
+            Console.WriteLine("Enter region: ");
+            region = Console.ReadLine();
+            Console.WriteLine("Enter city name: ");
+            city = Console.ReadLine();
+            Console.WriteLine("Enter year: ");
+            int.TryParse(Console.ReadLine(), out year);
             return;
         }
 
@@ -62,11 +77,83 @@ namespace Client
             // validacija da su godina i amount brojevi
             // month mapira na enum
 
-            region = "";
-            city = "";
-            year = 0;
-            amount = 0;
-            month = Months.JANUAR;
+            Console.WriteLine("Enter region: ");
+            region = Console.ReadLine();
+            Console.WriteLine("Enter city name: ");
+            city = Console.ReadLine();
+            Console.WriteLine("Enter year: ");
+            int.TryParse(Console.ReadLine(), out year);
+            Console.WriteLine("Enter month:");
+            string hMonth = Console.ReadLine();
+            hMonth = hMonth.ToLower();
+            switch (hMonth)
+            {
+                case "1":
+                case "januar":
+                case "january":
+                    month = Months.JANUAR;
+                    break;
+                case "2":
+                case "februar":
+                case "february":
+                    month = Months.FEBRUAR;
+                    break;
+                case "3":
+                case "mart":
+                case "march":
+                    month = Months.MART;
+                    break;
+                case "4":
+                case "April":
+                    month = Months.APRIL;
+                    break;
+                case "5":
+                case "maj":
+                case "may":
+                    month = Months.MAJ;
+                    break;
+                case "6":
+                case "jun":
+                case "june":
+                    month = Months.JUN;
+                    break;
+                case "7":
+                case "jul":
+                case "july":
+                    month = Months.JUL;
+                    break;
+                case "8":
+                case "avgust":
+                case "august":
+                    month = Months.AVGUST;
+                    break;
+                case "9":
+                case "septembar":
+                case "september":
+                    month = Months.SEPTEMBAR;
+                    break;
+                case "10":
+                case "oktobar":
+                case "october":
+                    month = Months.OKTOBAR;
+                    break;
+                case "11":
+                case "novembar":
+                case "november":
+                    month = Months.NOVEMBAR;
+                    break;
+                case "12":
+                case "decembar":
+                case "december":
+                    month = Months.DECEMBAR;
+                    break;
+                default:
+                    throw new Exception("Month doensn't exist.");
+                    break;
+            }
+            Console.WriteLine("Enter amount:");
+            double.TryParse(Console.ReadLine(), out amount);
+            //month = Months.JANUAR;
             return;
         }
 
@@ -74,8 +161,8 @@ namespace Client
         {
             // poziva se ako korisnik odabere opciju Get average for region ili Get max for region
             // treba da od korisnika ucita region
-
-            return "";
+            Console.WriteLine("Enter region:");
+            return Console.ReadLine();
         }
 
         public static string GetCity()
@@ -83,7 +170,8 @@ namespace Client
             // poziva se ako korisnik odabere opciju Get average for city
             // treba da od korisnika ucita city
 
-            return "";
+            Console.WriteLine("Enter city:");
+            return Console.ReadLine();
         }
     }
 }

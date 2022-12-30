@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Selectors;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -37,6 +38,8 @@ namespace Client
                     int year;
                     Months month;
                     double amount;
+                    double avg;
+                    string max;
 
                     switch (input)
                     {
@@ -65,10 +68,19 @@ namespace Client
                             proxy.DeleteConsumer(databaseName, region, city, year);
                             break;
                         case 8:
+                            region = ClientUIHelper.GetRegion();
+                            avg =  proxy.AverageConsumptionForRegion(databaseName,region);
+                            Console.WriteLine("Average consumption for region {0}:{1}",region,avg);
                             break;
                         case 9:
+                            city = ClientUIHelper.GetCity();
+                            avg = proxy.AverageConsumptionForCity(databaseName,city);
+                            Console.WriteLine("Average consumption for city {0}:{1}", city, avg);
                             break;
                         case 10:
+                            region = ClientUIHelper.GetRegion();
+                            max = proxy.MaxConsumerForRegion(databaseName, region);
+                            Console.WriteLine("Max consumption for region {0} had:{1}",region,max);
                             break;
                         case 0:
                             Console.WriteLine("Exiting");

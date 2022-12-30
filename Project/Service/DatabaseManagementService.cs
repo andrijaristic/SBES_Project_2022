@@ -122,14 +122,93 @@ namespace Service
         {
             // ako je databaseName prazan string baci exception
             // iz baze ucita sve entitete, vec ima metoda DatabaseHelper.GetAllConsumers(), i onda ovde odradi logiku
-            throw new NotImplementedException();
+            IPrincipal principal = Thread.CurrentPrincipal;
+            if (!CheckPermission(principal, "Read", "AverageConsumptionForCity"))
+            {
+                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
+                throw new FaultException($"User {userName} tried to call AverageConsumptionForCity method without having Read permissions.");
+            }
+            if (String.IsNullOrWhiteSpace(databaseName))
+            {
+                string reason = "Database name cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "AverageConsumptionForCity", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+            }
+            List<Consumer> consumers;
+            bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
+            if (!readingSuccessful)
+            {
+                string reason = "Database doesn't exist, is archived or is in faulted state";
+                AuditHelper.ExecutionFailure(principal, "AverageConsumptionForCity", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
+            }
+            double s = 0;
+            double b = 0;
+            double t = 0;
+            foreach (Consumer consumer in consumers)
+            {
+                if(consumer.City.Equals(city))
+                {
+                    t = 0;
+                    foreach (double amount in consumer.Amounts)
+                    {
+                        t += amount;
+                    }
+                    s += t / consumer.Amounts.Length;
+                    b++;
+                }
+            }
+            AuditHelper.ExecutionSuccess(principal, "AverageConsumptionForCity");
+            return s / b;
+
         }
 
         public double AverageConsumptionForRegion(string databaseName, string region)
         {
             // ako je databaseName prazan string baci exception
             // iz baze ucita sve entitete, vec ima metoda DatabaseHelper.GetAllConsumers(), i onda ovde odradi logiku
-            throw new NotImplementedException();
+            IPrincipal principal = Thread.CurrentPrincipal;
+            if (!CheckPermission(principal, "Read", "AverageConsumptionForRegion"))
+            {
+                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
+                throw new FaultException($"User {userName} tried to call AverageConsumptionForRegion method without having Read permissions.");
+            }
+            if (String.IsNullOrWhiteSpace(databaseName))
+            {
+                string reason = "Database name cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "AverageConsumptionForRegion", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+            }
+            List<Consumer> consumers;
+            bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
+            if (!readingSuccessful)
+            {
+                string reason = "Database doesn't exist, is archived or is in faulted state";
+                AuditHelper.ExecutionFailure(principal, "AverageConsumptionForRegion", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
+            }
+            double s = 0;
+            double b = 0;
+            double t = 0;
+            foreach (Consumer consumer in consumers)
+            {
+                if (consumer.Region.Equals(region))
+                {
+                    t = 0;
+                    foreach (double amount in consumer.Amounts)
+                    {
+                        t += amount;
+                    }
+                    s += t / consumer.Amounts.Length;
+                    b++;
+                }
+            }
+            AuditHelper.ExecutionSuccess(principal, "AverageConsumptionForRegion");
+            return s / b;
         }
 
         //[PrincipalPermission(SecurityAction.Demand, Role = "Create")]
@@ -294,9 +373,51 @@ namespace Service
 
         public string MaxConsumerForRegion(string databaseName, string region)
         {
-            // ako je databaseName prazan string baci exception
-            // iz baze ucita sve entitete, vec ima metoda DatabaseHelper.GetAllConsumers(), i onda ovde odradi logiku
-            throw new NotImplementedException();
+            IPrincipal principal = Thread.CurrentPrincipal;
+            if (!CheckPermission(principal, "Read", "MaxConsumerForRegion"))
+            {
+                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
+                throw new FaultException($"User {userName} tried to call MaxConsumerForRegion method without having Read permissions.");
+            }
+            if (String.IsNullOrWhiteSpace(databaseName))
+            {
+                string reason = "Database name cannot be empty";
+                AuditHelper.ExecutionFailure(principal, "MaxConsumerForRegion", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException("Database name cannot be empty"));
+            }
+            List<Consumer> consumers;
+            bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
+            if (!readingSuccessful)
+            {
+                string reason = "Database doesn't exist, is archived or is in faulted state";
+                AuditHelper.ExecutionFailure(principal, "MaxConsumerForRegion", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(reason));
+            }
+            string maxConsumer = "";
+            double maxAmount = 0;
+            foreach (Consumer consumer in consumers)
+            {
+                if(consumer.Region.Equals(region))
+                {
+                    double amount = 0;
+                    foreach (double a in consumer.Amounts)
+                    {
+                        amount += a;
+                    }
+                    if(amount>maxAmount)
+                    {
+                        maxAmount = amount;
+                        maxConsumer = consumer.ToString();
+                    }
+                }
+            }
+
+
+
+            AuditHelper.ExecutionSuccess(principal, "MaxConsumerForRegion");
+            return maxConsumer;
         }
 
         private bool CheckPermission(IPrincipal principal, string permission, string serviceName)
