@@ -69,7 +69,12 @@ namespace Client
 
             try
             {
-                return factory.AverageConsumptionForCity(databaseName,city);
+                double avg = factory.AverageConsumptionForCity(databaseName, city);
+                if (avg != 0)
+                    Console.WriteLine("Average consumption for city {0}: {1}", city, avg);
+                else
+                    Console.WriteLine("There are no records with that city in database.");
+                return 0;
             }
             catch (FaultException<DatabaseException> e)
             {
@@ -87,7 +92,12 @@ namespace Client
         {
             try
             {
-                return factory.AverageConsumptionForRegion(databaseName, region);
+                double avg = factory.AverageConsumptionForCity(databaseName, region);
+                if(avg!=0)
+                    Console.WriteLine("Average consumption for region {0}: {1}", region, avg);
+                else
+                    Console.WriteLine("There are no records with that region in database.");
+                return 0;
             }
             catch (FaultException<DatabaseException> e)
             {
@@ -171,7 +181,11 @@ namespace Client
         {
             try
             {
-                return factory.MaxConsumerForRegion(databaseName, region);
+                string s = factory.MaxConsumerForRegion(databaseName,region);
+                if(string.IsNullOrEmpty(s))
+                    Console.WriteLine("There are no records with that region in database.");
+                else Console.WriteLine(s);
+                return "";
             }
             catch (FaultException<DatabaseException> e)
             {

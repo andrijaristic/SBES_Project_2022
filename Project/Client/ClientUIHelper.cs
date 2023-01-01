@@ -18,6 +18,10 @@ namespace Client
             // 5. Add consumer 6. Edit consumer 7.Delete consumer 8. Get average for region 9. Get average for city
             // 10. Get max for region  0. exit
             // provera da li korisnik unese validnu komandu
+            if (string.IsNullOrWhiteSpace(databaseName))
+                Console.WriteLine("Database is not loaded.");
+            else
+                Console.WriteLine("Database: "+databaseName);
             Console.WriteLine("1. Switch database");
             Console.WriteLine("2. Create database");
             Console.WriteLine("3. Delete database");
@@ -30,7 +34,10 @@ namespace Client
             Console.WriteLine("10.Get max for region");
             Console.WriteLine("0. Exit");
             Console.WriteLine("Insert command:");
-            return int.Parse(Console.ReadLine());
+            int command;
+            if (int.TryParse(Console.ReadLine(), out command) == false)
+                return -1;
+            return command;
         }
 
         public static string GetDatabase()

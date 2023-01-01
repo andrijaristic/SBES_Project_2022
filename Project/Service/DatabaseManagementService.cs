@@ -161,6 +161,10 @@ namespace Service
                 }
             }
             AuditHelper.ExecutionSuccess(principal, "AverageConsumptionForCity");
+            if(b == 0)
+            {
+                return 0;
+            }
             return s / b;
 
         }
@@ -208,6 +212,10 @@ namespace Service
                 }
             }
             AuditHelper.ExecutionSuccess(principal, "AverageConsumptionForRegion");
+            if (b == 0)
+            {
+                return 0;
+            }
             return s / b;
         }
 
@@ -370,7 +378,7 @@ namespace Service
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
             AuditHelper.ExecutionSuccess(principal, "EditConsumer");
         }
-
+        
         public string MaxConsumerForRegion(string databaseName, string region)
         {
             IPrincipal principal = Thread.CurrentPrincipal;
@@ -395,29 +403,47 @@ namespace Service
 
                 throw new FaultException<DatabaseException>(new DatabaseException(reason));
             }
-            string maxConsumer = "";
-            double maxAmount = 0;
+            Dictionary<string, double> cityConsumptions = new Dictionary<string, double>();
             foreach (Consumer consumer in consumers)
             {
                 if(consumer.Region.Equals(region))
                 {
-                    double amount = 0;
-                    foreach (double a in consumer.Amounts)
+                    if(cityConsumptions.ContainsKey(consumer.City))
                     {
-                        amount += a;
+                        double consumption = 0;
+                        foreach (double amount in consumer.Amounts)
+                        {
+                            consumption += amount;
+                        }
+                        cityConsumptions[consumer.City] += consumption;
                     }
-                    if(amount>maxAmount)
+                    else
                     {
-                        maxAmount = amount;
-                        maxConsumer = consumer.ToString();
+                        double consumption = 0;
+                        foreach (double amount in consumer.Amounts)
+                        {
+                            consumption += amount;
+                        }
+                        cityConsumptions.Add(consumer.City, consumption);
                     }
                 }
             }
-
-
-
+            string city = "";
+            double maxConsumption = 0;
+            foreach (var item in cityConsumptions)
+            {
+                if (item.Value > maxConsumption)
+                {
+                    maxConsumption = item.Value;
+                    city = item.Key;
+                }
+            }
             AuditHelper.ExecutionSuccess(principal, "MaxConsumerForRegion");
-            return maxConsumer;
+            if(city.Equals("") && maxConsumption==0)
+            {
+                return "";
+            }
+            return String.Format("Consumer with highest consumption in region {0} is {1} with consumption {2}.",region,city,maxConsumption);
         }
 
         private bool CheckPermission(IPrincipal principal, string permission, string serviceName)

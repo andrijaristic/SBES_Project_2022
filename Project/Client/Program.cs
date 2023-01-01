@@ -69,18 +69,15 @@ namespace Client
                             break;
                         case 8:
                             region = ClientUIHelper.GetRegion();
-                            avg =  proxy.AverageConsumptionForRegion(databaseName,region);
-                            Console.WriteLine("Average consumption for region {0}:{1}",region,avg);
+                            proxy.AverageConsumptionForRegion(databaseName,region);
                             break;
                         case 9:
                             city = ClientUIHelper.GetCity();
-                            avg = proxy.AverageConsumptionForCity(databaseName,city);
-                            Console.WriteLine("Average consumption for city {0}:{1}", city, avg);
+                            proxy.AverageConsumptionForCity(databaseName, city);
                             break;
                         case 10:
                             region = ClientUIHelper.GetRegion();
-                            max = proxy.MaxConsumerForRegion(databaseName, region);
-                            Console.WriteLine("Max consumption for region {0} had:{1}",region,max);
+                            proxy.MaxConsumerForRegion(databaseName, region);
                             break;
                         case 0:
                             Console.WriteLine("Exiting");
