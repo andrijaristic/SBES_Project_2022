@@ -278,58 +278,6 @@ namespace Service
         }
 
         //[PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
-        public void DeleteConsumer(string databaseName, string region, string city, int year)
-        {
-            IPrincipal principal = Thread.CurrentPrincipal;
-            if (!CheckPermission(principal, "Edit", "DeleteConsumer"))
-            {
-                string userName = Formatter.ParseName(principal.Identity.Name).Split(',')[0].Split('=')[1];
-                throw new FaultException($"User {userName} tried to call DeleteConsumer method without having Edit permissions.");
-            }
-
-            if (String.IsNullOrWhiteSpace(databaseName))
-            {
-                string reason = "Database name cannot be empty";
-                AuditHelper.ExecutionFailure(principal, "DeleteConsumer", reason);
-
-                throw new FaultException<DatabaseException>(new DatabaseException(reason));
-            }
-
-            List<Consumer> consumers;
-            bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + databaseName + ".txt", out consumers);
-            if (!readingSuccessful)
-            {
-                string reason = "Database doesnt exist, is archived or is in faulted state";
-                AuditHelper.ExecutionFailure(principal, "DeleteConsumer", reason);
-
-                throw new FaultException<DatabaseException>(new DatabaseException(reason));
-            }
-
-            bool consumerExists = false;
-            Consumer deleteConsumer = null;
-            foreach (Consumer consumer in consumers)
-            {
-                if (String.Equals(consumer.Region, region) && String.Equals(consumer.City, city) && consumer.Year == year)
-                {
-                    consumerExists = true;
-                    deleteConsumer = consumer;
-                }
-            }
-
-            if (!consumerExists)
-            {
-                string reason = "Consumer doesnt exist";
-                AuditHelper.ExecutionFailure(principal, "DeleteConsumer", reason);
-
-                throw new FaultException<DatabaseException>(new DatabaseException(reason));
-            }
-
-            consumers.Remove(deleteConsumer);
-            DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
-            AuditHelper.ExecutionSuccess(principal, "DeleteConsumer");
-        }
-
-        //[PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
         public void EditConsumer(string databaseName, string region, string city, int year, Months month, double amount)
         {
             IPrincipal principal = Thread.CurrentPrincipal;

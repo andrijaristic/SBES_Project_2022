@@ -21,8 +21,7 @@ namespace Client
         {
             string cltCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
             cltCertCN = "wcfadmin";    // zakomentarisi ako pokreces sa naloga koje se zove wcfreader, wcfwriter, ili wcfadmin
-            this.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.Custom;
-            this.Credentials.ServiceCertificate.Authentication.CustomCertificateValidator = new ClientCertValidator();
+            this.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.ChainTrust;
             this.Credentials.ServiceCertificate.Authentication.RevocationMode = X509RevocationMode.NoCheck;
 
             /// Set appropriate client's certificate on the channel. Use CertManager class to obtain the certificate based on the "cltCertCN"
@@ -92,7 +91,7 @@ namespace Client
         {
             try
             {
-                double avg = factory.AverageConsumptionForCity(databaseName, region);
+                double avg = factory.AverageConsumptionForRegion(databaseName, region);
                 if(avg!=0)
                     Console.WriteLine("Average consumption for region {0}: {1}", region, avg);
                 else
@@ -144,7 +143,7 @@ namespace Client
                 Console.WriteLine("Error: {0}", e.Message);
             }
         }
-        public void DeleteConsumer(string databaseName, string region, string city, int year)
+        /*public void DeleteConsumer(string databaseName, string region, string city, int year)
         {
             try
             {
@@ -159,7 +158,7 @@ namespace Client
             {
                 Console.WriteLine("Error: {0}", e.Message);
             }
-        }
+        }*/
         public void EditConsumer(string databaseName, string region, string city, int year, Months month, double amount)
         {
             try

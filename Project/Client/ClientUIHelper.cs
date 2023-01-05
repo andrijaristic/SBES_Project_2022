@@ -15,8 +15,8 @@ namespace Client
             // sa klijenta se salje naziv baze sa kojom korisnik radi
             // ispise korisniku naziv baze sa kojom radi, opcije , i ucita korisnikovu opciju
             // opcije su: 1.Switch database 2. Crate database 3. Delete database 4.Archive database
-            // 5. Add consumer 6. Edit consumer 7.Delete consumer 8. Get average for region 9. Get average for city
-            // 10. Get max for region  0. exit
+            // 5. Add consumer 6. Edit consumer 7. Get average for region 8. Get average for city
+            // 9. Get max for region  0. exit
             // provera da li korisnik unese validnu komandu
             if (string.IsNullOrWhiteSpace(databaseName))
                 Console.WriteLine("Database is not loaded.");
@@ -28,10 +28,9 @@ namespace Client
             Console.WriteLine("4. Archive database");
             Console.WriteLine("5. Add consumer");
             Console.WriteLine("6. Edit consumer");
-            Console.WriteLine("7. Delete consumer");
-            Console.WriteLine("8. Get average for region");
-            Console.WriteLine("9. Get average for city");
-            Console.WriteLine("10.Get max for region");
+            Console.WriteLine("7. Get average for region");
+            Console.WriteLine("8. Get average for city");
+            Console.WriteLine("9. Get max for region");
             Console.WriteLine("0. Exit");
             Console.WriteLine("Insert command:");
             int command;
@@ -59,21 +58,6 @@ namespace Client
             city = Console.ReadLine();
             Console.WriteLine("Enter year: ");
             int.TryParse(Console.ReadLine(),out year);
-            return;
-        }
-
-        public static void GetDeleteParameters(out string region, out string city, out int year)
-        {
-            // poziva se ako korisnik odabere opciju Delete consumer
-            // treba da od korisnika ucita svaki ovaj parametar (region,city,year)
-            // validacija da li je godina broj
-            // copy pase GetAddParameters
-            Console.WriteLine("Enter region: ");
-            region = Console.ReadLine();
-            Console.WriteLine("Enter city name: ");
-            city = Console.ReadLine();
-            Console.WriteLine("Enter year: ");
-            int.TryParse(Console.ReadLine(), out year);
             return;
         }
 

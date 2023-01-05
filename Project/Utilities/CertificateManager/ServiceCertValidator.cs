@@ -11,7 +11,6 @@ namespace Utilities.CertificateManager
 {
     public class ServiceCertValidator : X509CertificateValidator
     {
-        string companyName = "TestCA";
         public override void Validate(X509Certificate2 certificate)
         {
             // CN=wcfadmin,OU=Readers_Writers_Admins,O=TestCA
@@ -19,13 +18,14 @@ namespace Utilities.CertificateManager
             try
             {
                 companyName = certificate.Subject.Split(',')[2].Split('=')[1];
+                companyName = "CN=" + companyName;
             }
             catch
             {
                 throw new Exception("Certificate is not from the valid issuer.");
             }
 
-            if (!this.companyName.Equals(companyName))
+            if (!String.Equals(companyName, certificate.Issuer))
             {
                 throw new Exception("Certificate is not from the valid issuer.");
             }

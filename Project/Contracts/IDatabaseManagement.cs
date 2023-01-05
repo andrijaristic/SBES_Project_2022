@@ -32,10 +32,6 @@ namespace Contracts
 
         [OperationContract]
         [FaultContract(typeof(DatabaseException))]
-        void DeleteConsumer(string databaseName, string region, string city, int year);
-
-        [OperationContract]
-        [FaultContract(typeof(DatabaseException))]
         double AverageConsumptionForCity(string databaseName, string city);
 
         [OperationContract]

@@ -35,7 +35,6 @@ namespace Service
                 host = new ServiceHost(typeof(DatabaseManagementService));
                 host.AddServiceEndpoint(typeof(IDatabaseManagement), binding, address);
 
-                host.Authorization.ServiceAuthorizationManager = new CustomAuthorizationManager();
                 ///Custom validation mode enables creation of a custom validator - CustomCertificateValidator
                 host.Credentials.ClientCertificate.Authentication.CertificateValidationMode = X509CertificateValidationMode.Custom;
                 host.Credentials.ClientCertificate.Authentication.CustomCertificateValidator = new ServiceCertValidator();

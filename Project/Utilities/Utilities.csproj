@@ -50,11 +50,9 @@
       <DependentUpon>AuditEventFile.resx</DependentUpon>
     </Compile>
     <Compile Include="AuditManager\AuditEvents.cs" />
-    <Compile Include="AuthorizationManager\CustomAuthorizationManager.cs" />
     <Compile Include="AuthorizationManager\CustomAuthorizationPolicy.cs" />
     <Compile Include="AuthorizationManager\CustomPrincipal.cs" />
     <Compile Include="CertificateManager\CertManager.cs" />
-    <Compile Include="CertificateManager\ClientCertValidator.cs" />
     <Compile Include="CertificateManager\RolesConfig.cs" />
     <Compile Include="CertificateManager\RolesConfigFile.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -64,18 +64,14 @@ namespace Client
                             proxy.EditConsumer(databaseName, region, city, year, month, amount);
                             break;
                         case 7:
-                            ClientUIHelper.GetDeleteParameters(out region, out city, out year);
-                            proxy.DeleteConsumer(databaseName, region, city, year);
-                            break;
-                        case 8:
                             region = ClientUIHelper.GetRegion();
                             proxy.AverageConsumptionForRegion(databaseName,region);
                             break;
-                        case 9:
+                        case 8:
                             city = ClientUIHelper.GetCity();
                             proxy.AverageConsumptionForCity(databaseName, city);
                             break;
-                        case 10:
+                        case 9:
                             region = ClientUIHelper.GetRegion();
                             proxy.MaxConsumerForRegion(databaseName, region);
                             break;
