@@ -20,13 +20,14 @@ namespace Service
     {
         static void Main(string[] args)
         {
-            string name = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
-            name = "wcfservice"; // zakomentarisi ako se pokrece kao korisnik sa odgovarajucim imenom
-            bool serviceIsPrimary = String.Equals(name, "wcfservice");
+            string type = string.Empty;
+            type = (string)ServiceConfig.ResourceManager.GetObject("Type");
+            type = type == null ? "Primary" : type;
+            bool serviceIsPrimary = String.Equals(type, "Primary");
             ServiceHost host = null;
             if (serviceIsPrimary)
             {
-                string srvCertCN = name;
+                string srvCertCN = (string)ServiceConfig.ResourceManager.GetObject("Certificate");
 
                 NetTcpBinding binding = new NetTcpBinding();
                 binding.Security.Transport.ClientCredentialType = TcpClientCredentialType.Certificate;
