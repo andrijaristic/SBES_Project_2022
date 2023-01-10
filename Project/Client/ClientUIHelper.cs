@@ -95,7 +95,7 @@ namespace Client
                     month = Months.MART;
                     break;
                 case "4":
-                case "April":
+                case "april":
                     month = Months.APRIL;
                     break;
                 case "5":

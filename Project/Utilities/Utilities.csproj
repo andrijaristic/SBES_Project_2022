@@ -60,6 +60,9 @@
       <DependentUpon>RolesConfigFile.resx</DependentUpon>
     </Compile>
     <Compile Include="CertificateManager\ServiceCertValidator.cs" />
+    <Compile Include="Cryptography\AES_CBC_Algorithm.cs" />
+    <Compile Include="Cryptography\DigitalSignature.cs" />
+    <Compile Include="Cryptography\SecretKey.cs" />
     <Compile Include="Formatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

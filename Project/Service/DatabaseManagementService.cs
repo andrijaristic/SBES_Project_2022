@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.ServiceModel;
@@ -10,15 +13,17 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 using Utilities;
+using Utilities.CertificateManager;
+using Utilities.Cryptography;
 
 namespace Service
 {
     public class DatabaseManagementService : IDatabaseManagement
     {
         private string serviceFolder = "ServiceData/";
-        // dodaj polje koje je proxy ka servisu za replikaciju, i pozivaj ga u metodama gde se uspesno izmene podaci
-
+       
         //[PrincipalPermission(SecurityAction.Demand, Role = "Add")]
         public void AddConsumer(string databaseName, string region, string city, int year)
         {
@@ -77,6 +82,34 @@ namespace Service
             consumers.Add(new Consumer(region, city, year));
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
             AuditHelper.ExecutionSuccess(principal, "AddConsumer");
+
+            using (ReplicatorProxy replicatorProxy = new ReplicatorProxy(new NetTcpBinding(), new EndpointAddress(new Uri("net.tcp://localhost:9001/ReplicatorService"))))
+            {
+                string eSecretKeyAes = SecretKey.GenerateKey();
+                SecretKey.StoreKey(eSecretKeyAes, "AES/SecretKey.txt");
+
+                byte[] encryptedData = null;
+                string data = databaseName + ":" + region + ":" + city + ":" + year;
+
+                try
+                {
+                    encryptedData = AES_CBC_Algorithm.EncryptString(data, eSecretKeyAes);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Encryption failed. Reason: {0}", e.Message);
+                }
+
+                //string signCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name) + "_sign";
+                string signCertCN = "wcfservice_sign";
+
+                X509Certificate2 certificateSign = CertManager.GetCertificateFromStorage(StoreName.My,
+                   StoreLocation.LocalMachine, signCertCN);
+
+                byte[] signature = DigitalSignature.Create(encryptedData, certificateSign);
+
+                replicatorProxy.AddConsumer(encryptedData, signature);
+            }
         }
 
         //[PrincipalPermission(SecurityAction.Demand, Role = "Archive")]
@@ -116,6 +149,33 @@ namespace Service
             }
 
             AuditHelper.ExecutionSuccess(principal, "ArchiveDatabase");
+
+            using (ReplicatorProxy replicatorProxy = new ReplicatorProxy(new NetTcpBinding(), new EndpointAddress(new Uri("net.tcp://localhost:9001/ReplicatorService"))))
+            {
+                string eSecretKeyAes = SecretKey.GenerateKey();
+                SecretKey.StoreKey(eSecretKeyAes, "AES/SecretKey.txt");
+
+                byte[] encryptedData = null;
+
+                try
+                {
+                    encryptedData = AES_CBC_Algorithm.EncryptString(databaseName, eSecretKeyAes);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Encryption failed. Reason: {0}", e.Message);
+                }
+
+                //string signCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name) + "_sign";
+                string signCertCN = "wcfservice_sign";
+
+                X509Certificate2 certificateSign = CertManager.GetCertificateFromStorage(StoreName.My,
+                   StoreLocation.LocalMachine, signCertCN);
+
+                byte[] signature = DigitalSignature.Create(encryptedData, certificateSign);
+
+                replicatorProxy.ArchiveDatabase(encryptedData, signature);
+            }
         }
 
         public double AverageConsumptionForCity(string databaseName, string city)
@@ -246,6 +306,32 @@ namespace Service
             }
 
             AuditHelper.ExecutionSuccess(principal, "CreateDatabase");
+            using (ReplicatorProxy replicatorProxy = new ReplicatorProxy(new NetTcpBinding(), new EndpointAddress(new Uri("net.tcp://localhost:9001/ReplicatorService"))))
+            {
+                string eSecretKeyAes = SecretKey.GenerateKey();
+                SecretKey.StoreKey(eSecretKeyAes, "AES/SecretKey.txt");
+
+                byte[] encryptedData = null;
+
+                try
+                {
+                    encryptedData = AES_CBC_Algorithm.EncryptString(databaseName, eSecretKeyAes);                   
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Encryption failed. Reason: {0}", e.Message);
+                }
+
+                //string signCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name) + "_sign";
+                string signCertCN = "wcfservice_sign";
+
+                X509Certificate2 certificateSign = CertManager.GetCertificateFromStorage(StoreName.My,
+                   StoreLocation.LocalMachine, signCertCN);
+
+                byte[] signature = DigitalSignature.Create(encryptedData, certificateSign);
+
+                replicatorProxy.CreateDatabase(encryptedData, signature);
+            }
         }
 
         //[PrincipalPermission(SecurityAction.Demand, Role = "Delete")]
@@ -275,6 +361,33 @@ namespace Service
             }
 
             AuditHelper.ExecutionSuccess(principal, "DeleteDatabase");
+
+            using (ReplicatorProxy replicatorProxy = new ReplicatorProxy(new NetTcpBinding(), new EndpointAddress(new Uri("net.tcp://localhost:9001/ReplicatorService"))))
+            {
+                string eSecretKeyAes = SecretKey.GenerateKey();
+                SecretKey.StoreKey(eSecretKeyAes, "AES/SecretKey.txt");
+
+                byte[] encryptedData = null;
+
+                try
+                {
+                    encryptedData = AES_CBC_Algorithm.EncryptString(databaseName, eSecretKeyAes);                   
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Encryption failed. Reason: {0}", e.Message);
+                }
+
+                //string signCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name) + "_sign";
+                string signCertCN = "wcfservice_sign";
+
+                X509Certificate2 certificateSign = CertManager.GetCertificateFromStorage(StoreName.My,
+                   StoreLocation.LocalMachine, signCertCN);
+
+                byte[] signature = DigitalSignature.Create(encryptedData, certificateSign);
+
+                replicatorProxy.DeleteDatabase(encryptedData, signature);
+            }
         }
 
         //[PrincipalPermission(SecurityAction.Demand, Role = "Edit")]
@@ -325,6 +438,34 @@ namespace Service
 
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
             AuditHelper.ExecutionSuccess(principal, "EditConsumer");
+
+            using (ReplicatorProxy replicatorProxy = new ReplicatorProxy(new NetTcpBinding(), new EndpointAddress(new Uri("net.tcp://localhost:9001/ReplicatorService"))))
+            {
+                string eSecretKeyAes = SecretKey.GenerateKey();
+                SecretKey.StoreKey(eSecretKeyAes, "AES/SecretKey.txt");
+
+                byte[] encryptedData = null;
+                string data = databaseName + ":" + region + ":" + city + ":" + year + ":" + month + ":" + amount;
+
+                try
+                {
+                    encryptedData = AES_CBC_Algorithm.EncryptString(data, eSecretKeyAes);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Encryption failed. Reason: {0}", e.Message);
+                }
+
+                //string signCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name) + "_sign";
+                string signCertCN = "wcfservice_sign";
+
+                X509Certificate2 certificateSign = CertManager.GetCertificateFromStorage(StoreName.My,
+                   StoreLocation.LocalMachine, signCertCN);
+
+                byte[] signature = DigitalSignature.Create(encryptedData, certificateSign);
+
+                replicatorProxy.EditConsumer(encryptedData, signature);
+            }
         }
         
         public string MaxConsumerForRegion(string databaseName, string region)
