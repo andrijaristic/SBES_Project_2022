@@ -78,8 +78,8 @@ namespace Service
                     throw new FaultException<DatabaseException>(new DatabaseException(reason));
                 }
             }
-
-            consumers.Add(new Consumer(region, city, year));
+            Consumer c = new Consumer(region, city, year);
+            consumers.Add(c);
             DatabaseHelper.SaveConsumers(serviceFolder + databaseName + ".txt", consumers);
             AuditHelper.ExecutionSuccess(principal, "AddConsumer");
 
@@ -89,7 +89,7 @@ namespace Service
                 SecretKey.StoreKey(eSecretKeyAes, "AES/SecretKey.txt");
 
                 byte[] encryptedData = null;
-                string data = databaseName + ":" + region + ":" + city + ":" + year;
+                string data = databaseName + ":" + region + ":" + city + ":" + year + ":" + c.Id;
 
                 try
                 {

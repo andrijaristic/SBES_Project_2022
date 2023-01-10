@@ -37,6 +37,7 @@ namespace Service
                 string decryptedRegion = decryptedData.Split(':')[1];
                 string decryptedCity = decryptedData.Split(':')[2];
                 int decryptedYear = Convert.ToInt32(decryptedData.Split(':')[3]);
+                Guid decryptedId = Guid.Parse(decryptedData.Split(':')[4]);
 
                 List<Consumer> consumers;
                 bool readingSuccessful = DatabaseHelper.GetAllConsumers(serviceFolder + decryptedDatabaseName + ".txt", out consumers);
@@ -59,7 +60,9 @@ namespace Service
                     }
                 }
 
-                consumers.Add(new Consumer(decryptedRegion, decryptedCity, decryptedYear));
+                Consumer c = new Consumer(decryptedRegion, decryptedCity, decryptedYear);
+                c.Id = decryptedId;
+                consumers.Add(c);
                 DatabaseHelper.SaveConsumers(serviceFolder + decryptedDatabaseName + ".txt", consumers);
                 //AuditHelper.ExecutionSuccess(principal, "AddConsumer");
             }
