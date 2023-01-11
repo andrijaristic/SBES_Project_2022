@@ -16,6 +16,7 @@ namespace Utilities.AuditManager
         AuthorizationFailure = 2,
         ExecutionSuccess = 3,
         ExecutionFailure = 4,
+        Replication = 5,
     }
     public class AuditEvents
     {
@@ -75,6 +76,14 @@ namespace Utilities.AuditManager
             get
             {
                 return ResourceMgr.GetString(AuditEventTypes.ExecutionFailure.ToString());
+            }
+        }
+
+        public static string Replication
+        {
+            get
+            {
+                return ResourceMgr.GetString(AuditEventTypes.Replication.ToString());
             }
         }
     }

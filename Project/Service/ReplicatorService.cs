@@ -64,7 +64,7 @@ namespace Service
                 c.Id = decryptedId;
                 consumers.Add(c);
                 DatabaseHelper.SaveConsumers(serviceFolder + decryptedDatabaseName + ".txt", consumers);
-                //AuditHelper.ExecutionSuccess(principal, "AddConsumer");
+                AuditHelper.Replication(principal);
             }
             else
             {
@@ -107,7 +107,7 @@ namespace Service
                     throw new FaultException<DatabaseException>(new DatabaseException(reason));
                 }
 
-                //AuditHelper.ExecutionSuccess(principal, "ArchiveDatabase");
+                AuditHelper.Replication(principal);
             }
             else
             {
@@ -139,7 +139,8 @@ namespace Service
 
                     throw new FaultException<DatabaseException>(new DatabaseException(reason));
                 }
-                //AuditHelper.ExecutionSuccess(principal, "CreateDatabase");
+
+                AuditHelper.Replication(principal);
             }
             else
             {
@@ -172,7 +173,7 @@ namespace Service
                     throw new FaultException<DatabaseException>(new DatabaseException(reason));
                 }
 
-                //AuditHelper.ExecutionSuccess(principal, "DeleteDatabase");
+                AuditHelper.Replication(principal);
             }
             else
             {
@@ -232,7 +233,7 @@ namespace Service
                 }
 
                 DatabaseHelper.SaveConsumers(serviceFolder + decryptedDatabaseName + ".txt", consumers);
-                //AuditHelper.ExecutionSuccess(principal, "EditConsumer");
+                AuditHelper.Replication(principal);
             }
             else
             {

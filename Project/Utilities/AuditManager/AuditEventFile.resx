@@ -132,4 +132,7 @@
   <data name="ExecutionSuccess" xml:space="preserve">
     <value>User {0} successfully executed {1}.</value>
   </data>
+  <data name="Replication" xml:space="preserve">
+    <value>Data successfully replicated.</value>
+  </data>
 </root>

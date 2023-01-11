@@ -104,5 +104,14 @@ namespace Utilities.AuditManager {
                 return ResourceManager.GetString("ExecutionSuccess", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data successfully replicated..
+        /// </summary>
+        internal static string Replication {
+            get {
+                return ResourceManager.GetString("Replication", resourceCulture);
+            }
+        }
     }
 }

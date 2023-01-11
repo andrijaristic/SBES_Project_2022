@@ -104,6 +104,15 @@ namespace Utilities.AuditManager
             }
         }
 
+        public static void Replication()
+        {
+            if (customLog != null)
+            {
+                string replicationMessage = AuditEvents.Replication;
+                customLog.WriteEntry(replicationMessage);
+            }
+        }
+
         public void Dispose()
         {
             if (customLog != null) 

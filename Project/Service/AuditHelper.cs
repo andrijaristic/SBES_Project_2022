@@ -69,5 +69,18 @@ namespace Service
                 Console.WriteLine(e.Message);
             }
         }
+
+        public static void Replication(IPrincipal principal)
+        {
+            string userName = Formatter.ParseName(principal.Identity.Name);
+            try
+            {
+                Audit.Replication();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
     }
 }
