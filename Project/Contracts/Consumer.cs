@@ -62,7 +62,6 @@ namespace Contracts
                 string region = properties[1];
                 string city = properties[2];
                 int year = int.Parse(properties[3]);
-                double amount = double.Parse(properties[4]);
                 double[] amounts = new double[12];
                 for(int i = 4; i < 15; i++)
                 {

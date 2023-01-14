@@ -50,12 +50,28 @@ namespace Service
                 throw new FaultException<DatabaseException>(new DatabaseException(region));
             }
 
+            if (region.Contains(";") || region.Contains(":"))
+            {
+                string reason = "Region cannot contain special characters";
+                AuditHelper.ExecutionFailure(principal, "AddConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(region));
+            }
+
             if (String.IsNullOrWhiteSpace(city))
             {
                 string reason = "City cannot be empty";
                 AuditHelper.ExecutionFailure(principal, "AddConsumer", reason);
 
                 throw new FaultException<DatabaseException>(new DatabaseException(reason));
+            }
+
+            if (city.Contains(";") || city.Contains(":"))
+            {
+                string reason = "City cannot contain special characters";
+                AuditHelper.ExecutionFailure(principal, "AddConsumer", reason);
+
+                throw new FaultException<DatabaseException>(new DatabaseException(region));
             }
 
             List<Consumer> consumers;

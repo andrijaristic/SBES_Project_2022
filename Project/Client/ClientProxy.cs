@@ -20,7 +20,7 @@ namespace Client
             : base(binding, address)
         {
             string cltCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
-            cltCertCN = "wcfadmin";    // zakomentarisi ako pokreces sa naloga koje se zove wcfreader, wcfwriter, ili wcfadmin
+            //cltCertCN = "wcfwriter";    // zakomentarisi ako pokreces sa naloga koje se zove wcfreader, wcfwriter, ili wcfadmin
             this.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.ChainTrust;
             this.Credentials.ServiceCertificate.Authentication.RevocationMode = X509RevocationMode.NoCheck;
 

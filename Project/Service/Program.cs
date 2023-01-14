@@ -62,11 +62,11 @@ namespace Service
                 host.Description.Behaviors.Remove<ServiceSecurityAuditBehavior>();
                 host.Description.Behaviors.Add(newAudit);
 
-                using (ResXResourceWriter resx = new ResXResourceWriter(@"..\..\ServiceConfig.resx"))
+                /*using (ResXResourceWriter resx = new ResXResourceWriter(@"..\..\ServiceConfig.resx"))
                 {
                     resx.AddResource("Certificate", "wcfservice");
                     resx.AddResource("Type", "Secondary");
-                }
+                }*/
             }
             else
             {
@@ -90,11 +90,11 @@ namespace Service
                 host.Description.Behaviors.Remove<ServiceSecurityAuditBehavior>();
                 host.Description.Behaviors.Add(newAudit);
 
-                using (ResXResourceWriter resx = new ResXResourceWriter(@"..\..\ServiceConfig.resx"))
+                /*using (ResXResourceWriter resx = new ResXResourceWriter(@"..\..\ServiceConfig.resx"))
                 {
                     resx.AddResource("Certificate", "wcfservice");
                     resx.AddResource("Type", "Primary");
-                }
+                }*/
             }
 
             try
