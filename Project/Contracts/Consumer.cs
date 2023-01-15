@@ -63,7 +63,7 @@ namespace Contracts
                 string city = properties[2];
                 int year = int.Parse(properties[3]);
                 double[] amounts = new double[12];
-                for(int i = 4; i < 15; i++)
+                for(int i = 4; i <= 15; i++)
                 {
                     amounts[i-4] = double.Parse(properties[i]);
                 }
